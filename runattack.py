@@ -98,10 +98,22 @@ def run_attack(a):
             logging.info(f"Saved watermarked audio: {watermarked_path}")
         
         # Compute PESQ
-        nb_score, wb_score = cal_pesq_audio(signal, sample_rate, full_watermarked_audio, sample_rate)
+        try:
+            nb_score, wb_score = cal_pesq_audio(signal, sample_rate, full_watermarked_audio, sample_rate)
+            # nb_pesq = pesq(16000, ref_signal, deg_signal, 'nb')
+            # wb_pesq = pesq(16000, ref_signal, deg_signal, 'wb')
+        except Exception as e:            
+            logging.error(f"Error computing PESQ for signals: {e}")
+            nb_score, wb_score = np.nan, np.nan
+        
+        # nb_score, wb_score = cal_pesq_audio(signal, sample_rate, full_watermarked_audio, sample_rate)
 
         # Compute STOI
-        stoi_score = cal_stoi_audio(signal, full_watermarked_audio, sample_rate)
+        try:
+            stoi_score = cal_stoi_audio(signal, full_watermarked_audio, sample_rate)
+        except Exception as e:            
+            logging.error(f"Error computing STOI for signals: {e}")
+            stoi_score = np.nan
 
         # Compute BER before attacks
         embedded_messages = np.array(embedded_messages)
@@ -174,6 +186,9 @@ def run_attack(a):
                 attack_results[attack_name] = round(BER_attack, 3)
 
             results.append(attack_results)
+        else: 
+            results.append(attack_results)
+
 
     # Save results to CSV
     df = pd.DataFrame(results)
@@ -201,3 +216,4 @@ if __name__ == "__main__":
 # [dummy] python runattack.py --input_dir /workspace/AcademiCodec/egs/HiFi-Codec-24k-240d/outputhf-dummy --output_dir /workspace/wavmark/output/outputhf-dummy --csv /workspace/wavmark/results/ber-attack-outputhf-dummy.csv --is_attack --save_watermarked --save_attacked
 # [test-2; hf pretrained] python runattack.py --input_dir /workspace/AcademiCodec/egs/HiFi-Codec-24k-240d/outputhf-2 --output_dir /workspace/wavmark/output/outputhf-2 --csv /workspace/wavmark/results/ber-attack-outputhf-2.csv --is_attack --save_watermarked --save_attacked
     
+# python runattack.py --input_dir /workspace/AcademiCodec/egs/HiFi-Codec-24k-240d/output-2 --output_dir /workspace/wavmark/output/output-2 --csv /workspace/wavmark/results/ber-attack-output-2.csv --is_attack --save_watermarked --save_attacked
