@@ -188,13 +188,17 @@ def run_attack(a):
             results.append(attack_results)
         else: 
             results.append(attack_results)
-
+    
+    # Ensure the directory exists before saving the CSV
+    csv_dir = os.path.dirname(a.csv)
+    if csv_dir and not os.path.exists(csv_dir):
+        os.makedirs(csv_dir, exist_ok=True)
+        logging.info(f"Created directory: {csv_dir}")
 
     # Save results to CSV
     df = pd.DataFrame(results)
     df.to_csv(a.csv, index=False)
     logging.info(f"BER results saved to: {a.csv}")
-
 
 def main():
     parser = argparse.ArgumentParser(description="Watermark, attack, and decode audio files.")
@@ -216,4 +220,6 @@ if __name__ == "__main__":
 # [dummy] python runattack.py --input_dir /workspace/AcademiCodec/egs/HiFi-Codec-24k-240d/outputhf-dummy --output_dir /workspace/wavmark/output/outputhf-dummy --csv /workspace/wavmark/results/ber-attack-outputhf-dummy.csv --is_attack --save_watermarked --save_attacked
 # [test-2; hf pretrained] python runattack.py --input_dir /workspace/AcademiCodec/egs/HiFi-Codec-24k-240d/outputhf-2 --output_dir /workspace/wavmark/output/outputhf-2 --csv /workspace/wavmark/results/ber-attack-outputhf-2.csv --is_attack --save_watermarked --save_attacked
     
-# python runattack.py --input_dir /workspace/AcademiCodec/egs/HiFi-Codec-24k-240d/output-2 --output_dir /workspace/wavmark/output/output-2 --csv /workspace/wavmark/results/ber-attack-output-2.csv --is_attack --save_watermarked --save_attacked
+# python runattack.py --input_dir /workspace/AcademiCodec/dataset/LibriTTS/test-clean-2 --output_dir /workspace/wavmark/output/wavmark-clean-2 --csv /workspace/wavmark/results/ber-wavmark-clean-2.csv --save_watermarked
+
+# [dummy] python runattack.py --input_dir /workspace/AcademiCodec/dataset/LibriTTS/demo/hifi-clean-2 --output_dir /workspace/wavmark/output/hifi-wavmark-clean-2 --csv /workspace/wavmark/results/ber-hifi-wavmark-clean-2.csv --save_watermarked
